@@ -88,7 +88,7 @@ void OnTick(){
    }
    
    Comment(
-   //[0] current [1] pervios
+   //[0] curret [1] previous
    "fast[0]", fastBuffer[0],"\n",
    "fast[1]", fastBuffer[1],"\n",
    "slow[0]", slowBuffer[0],"\n",
