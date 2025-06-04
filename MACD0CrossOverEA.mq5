@@ -18,6 +18,7 @@ double macd_buffer[],signal_buffer[];
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 int OnInit(){
+   macd_handle = iMACD(_Symbol,PERIOD_CURRENT,macd_fast,macd_slow,signal,PRICE_CLOSE);
    ArraySetAsSeries(macd_buffer,true);
    ArraySetAsSeries(signal_buffer,true);
    return(INIT_SUCCEEDED);
@@ -34,7 +35,6 @@ void OnDeinit(const int reason){
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
 void OnTick(){
-   macd_handle = iMACD(_Symbol,PERIOD_CURRENT,macd_fast,macd_slow,signal,PRICE_CLOSE);
    CopyBuffer(macd_handle,0,0,2,macd_buffer);
    CopyBuffer(macd_handle,1,0,2,signal_buffer);
    
