@@ -59,7 +59,7 @@ int OnInit(){
    ArraySetAsSeries(BufferMain,true);
    ArraySetAsSeries(BufferUpper,true);
    ArraySetAsSeries(BufferLower,true);
-   Handle = iMA(_Symbol,PERIOD_CURRENT,InpMABars,0,InpMAMethod,InpMAAppliedPrice);
+   HandleMa = iMA(_Symbol,PERIOD_CURRENT,InpMABars,0,InpMAMethod,InpMAAppliedPrice);
    HandleATR = iATR(_Symbol,PERIOD_CURRENT,InpATRBars);
    ArraySetAsSeries(ValuesMA,true);
    ArraySetAsSeries(ValuesATR,true);
@@ -73,17 +73,30 @@ void OnDeinit(const int reason){
 //+------------------------------------------------------------------+
 //| Custom indicator iteration function                              |
 //+------------------------------------------------------------------+
-//wtf is this shit 
-int OnCalculate(const int rates_total, //bar t har avaiable in the current timeframe
-                const int prev_calculated, // return 
-                const datetime &time[], //
-                const double &open[], // 
-                const double &high[], //
-                const double &low[], //
-                const double &close[], //
-                const long &tick_volume[], //
-                const long &volume[], //
-                const int &spread[]) //
+int OnCalculate(const int rates_total, //No of bar that has avaiable in the current timeframe
+                const int prev_calculated, // return  from last call
+                const datetime &time[], //Array of bar start times
+                const double &open[], // Array of open price 
+                const double &high[], // Array of High price
+                const double &low[], // Array of Low price
+                const double &close[], //Array of Close price
+                const long &tick_volume[], // Array of Tick Volume
+                const long &volume[], // Array of Real volume
+                const int &spread[]) //Array of spread (Ask - Bid) / Point
 {
+   int count = rates_total-prev_calculated;
+   if (prev_calculated > 0) count++;
+   
+   if (CopyBuffer(HandleMa,0,0,count,ValuesMA) < count) return(0);
+   if (CopyBuffer(HandleATR,0,0,count,ValuesATR) < count) return(0);
+   
+   for (int i = count-1; i >= 0;i--){
+      BufferMain[i] = ValuesMA[i];
+      double channelWidth = InpATRFactor * ValuesATR[i];
+      BufferUpper[i] = BufferMain[i] + channelWidth;
+      BufferLower[i] = BufferMain[i] - channelWidth;
+      
+   }
+   
    return(rates_total);
 }
